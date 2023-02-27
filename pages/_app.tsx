@@ -1,11 +1,15 @@
 import "../styles/globals.css";
 import { FluentProvider, teamsLightTheme } from "@fluentui/react-components";
-import type { AppProps } from "next/app";
+import EmptyLayout from "component/layout/EmptyLayout";
+import { AppPropsWithLayout } from "models";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const Layout = Component.Layout ?? EmptyLayout;
   return (
     <FluentProvider theme={teamsLightTheme}>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </FluentProvider>
   );
 }
