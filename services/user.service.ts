@@ -7,8 +7,9 @@ import { BehaviorSubject } from "rxjs";
 const { publicRuntimeConfig } = getConfig();
 const baseUrl = `${publicRuntimeConfig.apiUrl}/users`;
 const userSubject = new BehaviorSubject(
-  process.browser && JSON.parse(localStorage.getItem("user") || "")
+  process.browser && JSON.parse(localStorage.getItem("user"))
 );
+console.log("userSubject", userSubject);
 
 export const userService = {
   user: userSubject.asObservable(),

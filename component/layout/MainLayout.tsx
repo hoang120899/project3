@@ -1,9 +1,12 @@
 import { LayoutProps } from "models";
 
-interface MainLayoutProps {}
-
 const MainLayout = (props: LayoutProps) => {
-  return <>Main Layout</>;
+  return (
+    <>
+      <div>Main Layout</div>
+      {props.children}
+    </>
+  );
 };
 
 export default MainLayout;
