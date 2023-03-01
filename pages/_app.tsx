@@ -1,4 +1,4 @@
-import "../styles/globals.css";
+import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { ThemeProvider } from "@fluentui/react";
 import { FluentProvider, teamsLightTheme } from "@fluentui/react-components";
 import EmptyLayout from "component/layout/EmptyLayout";
@@ -6,8 +6,10 @@ import { AppPropsWithLayout } from "models";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { userService } from "services";
+import { SWRConfig } from "swr";
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  initializeIcons();
   const Layout = Component.Layout ?? EmptyLayout;
 
   const router = useRouter();
@@ -17,23 +19,25 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const authCheck = useCallback(
     (url: string) => {
       // redirect to login page if accessing a private page and not logged in
-      console.log("userService.userValue", userService.userValue);
-      console.log("url", url);
+      console.log("userService.userValue", userService);
 
       setUser(userService.userValue);
       const publicPaths = ["/account/login", "/account/register"];
       const path = url.split("?")[0];
-      if (!userService.userValue && !publicPaths.includes(path)) {
+      console.log("path", !publicPaths.includes(path));
+      if (!userService?.userValue?.token && !publicPaths.includes(path)) {
+        console.log("failed vcl");
         setAuthorized(false);
         router.push({
           pathname: "/account/login",
           query: { returnUrl: router.asPath },
         });
       } else {
+        console.log("co r");
         setAuthorized(true);
       }
     },
-    [userService]
+    [userService.userValue]
   );
   useEffect(() => {
     // on initial load - run auth check
@@ -51,13 +55,17 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       router.events.off("routeChangeStart", hideContent);
       router.events.off("routeChangeComplete", authCheck);
     };
+  }, [userService.userValue]);
+  useEffect(() => {
+    import("../styles/reset.scss").then(() => import("../styles/globals.scss"));
   }, []);
-
   return (
-    <FluentProvider theme={teamsLightTheme}>
-      <ThemeProvider>
-        <Layout>{authorized && <Component {...pageProps} />}</Layout>
-      </ThemeProvider>
-    </FluentProvider>
+    <SWRConfig>
+      <FluentProvider theme={teamsLightTheme}>
+        <ThemeProvider>
+          <Layout>{authorized && <Component {...pageProps} />}</Layout>
+        </ThemeProvider>
+      </FluentProvider>
+    </SWRConfig>
   );
 }

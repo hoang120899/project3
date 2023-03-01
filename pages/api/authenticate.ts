@@ -20,7 +20,7 @@ function authenticate(req: any, res: any) {
   }
 
   // create a jwt token that is valid for 7 days
-  const token = jwt.sign({ sub: user.id }, serverRuntimeConfig.secret, {
+  const token = jwt.sign({ sub: user.id }, serverRuntimeConfig.mySecret, {
     expiresIn: "7d",
   });
 

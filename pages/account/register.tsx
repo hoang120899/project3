@@ -7,6 +7,7 @@ import OnBoardingLayout from "component/layout/OnBoardingLayout";
 import { FormikProps } from "formik";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useRef } from "react";
+import { PATH_AUTH } from "routes";
 import { userService } from "services";
 import * as Yup from "yup";
 
@@ -21,6 +22,7 @@ function Register() {
       firstName: "",
       lastName: "",
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
     }),
@@ -37,7 +39,7 @@ function Register() {
     email: Yup.string()
       .email("The email address is not valid")
       .required("Email address is required!"),
-    userName: Yup.string()
+    username: Yup.string()
       .matches(/[^\s]/, "Username can't be all space!")
       .required("Email address is required!"),
     password: Yup.string()
@@ -52,18 +54,25 @@ function Register() {
       .oneOf([Yup.ref("password")], "The confirmation password is not match"),
   });
   const handleSubmitForm = useCallback(() => {
+    console.log("submit");
     formRef.current?.submitForm();
   }, []);
   // get functions to build form with useForm() hook
-  const onSubmit = useCallback((user: any) => {
+  function onSubmit(user: any) {
+    const dataSubmit = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      password: user.password,
+    };
     return userService
-      .register(user)
+      .register(dataSubmit)
       .then(() => {
-        console.log("login success");
-        router.push("login");
+        router.push(PATH_AUTH.login);
       })
       .catch(() => console.log("login failed"));
-  }, []);
+  }
 
   return (
     <div className="flex h-full items-center justify-around">
@@ -81,13 +90,8 @@ function Register() {
             </Text>
             <Form
               initialValues={initialValues}
-              innerRef={formRef}
-              onSubmit={(values) =>
-                onSubmit({
-                  username: values.username,
-                  password: values.password,
-                })
-              }
+              ref={formRef}
+              onSubmit={(values) => onSubmit(values)}
               validationSchema={validationSchema}
               enableReinitialize
             >
@@ -106,7 +110,11 @@ function Register() {
               <FormItem name="email">
                 <InputForm
                   label="Email address"
-                  inputProps={{ placeholder: "Email address", size: "medium" }}
+                  inputProps={{
+                    placeholder: "Email address",
+                    size: "medium",
+                    autoComplete: "email",
+                  }}
                 />
               </FormItem>
               <FormItem name="username">

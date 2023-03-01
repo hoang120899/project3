@@ -1,15 +1,12 @@
 import { fetchWrapper } from "helpers";
-import { LoginPaypoad, User } from "models";
-import getConfig from "next/config";
+import { User, UserRegister } from "models";
 import Router from "next/router";
+import { API_REGISTER, API_SIGNIN, API_USERS, PATH_AUTH } from "routes";
 import { BehaviorSubject } from "rxjs";
 
-const { publicRuntimeConfig } = getConfig();
-const baseUrl = `${publicRuntimeConfig.apiUrl}/users`;
 const userSubject = new BehaviorSubject(
-  process.browser && JSON.parse(localStorage.getItem("user"))
+  process.browser && JSON.parse(localStorage.getItem("user") || "{}")
 );
-console.log("userSubject", userSubject);
 
 export const userService = {
   user: userSubject.asObservable(),
@@ -26,38 +23,35 @@ export const userService = {
 };
 
 function login(username: string, password: string) {
-  return fetchWrapper
-    .post(`${baseUrl}/authenticate`, { username, password })
-    .then((user) => {
-      // publish user to subscribers and store in local storage to stay logged in between page refreshes
-      userSubject.next(user);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      return user;
-    });
+  return fetchWrapper.post(API_SIGNIN, { username, password }).then((user) => {
+    // publish user to subscribers and store in local storage to stay logged in between page refreshes
+    userSubject.next(user);
+    localStorage.setItem("user", JSON.stringify(user));
+    return user;
+  });
 }
 
 function logout() {
   // remove user from local storage, publish null to user subscribers and redirect to login page
   localStorage.removeItem("user");
   userSubject.next(null);
-  Router.push("/account/login");
+  Router.push(PATH_AUTH.login);
 }
 
-function register(user: LoginPaypoad) {
-  return fetchWrapper.post(`${baseUrl}/register`, user);
+function register(user: UserRegister) {
+  return fetchWrapper.post(API_REGISTER, user);
 }
 
 function getAll() {
-  return fetchWrapper.get(baseUrl);
+  return fetchWrapper.get(API_USERS);
 }
 
 function getById(id: string) {
-  return fetchWrapper.get(`${baseUrl}/${id}`);
+  return fetchWrapper.get(`${API_USERS}/${id}`);
 }
 
 function update(id: string, params: User) {
-  return fetchWrapper.put(`${baseUrl}/${id}`, params).then((x) => {
+  return fetchWrapper.put(`${API_USERS}/${id}`, params).then((x) => {
     // update stored user if the logged in user updated their own record
     if (id === userSubject.value.id) {
       // update local storage
@@ -73,5 +67,5 @@ function update(id: string, params: User) {
 
 // prefixed with underscored because delete is a reserved word in javascript
 function _delete(id: string) {
-  return fetchWrapper.delete(`${baseUrl}/${id}`);
+  return fetchWrapper.delete(`${API_USERS}/${id}`);
 }

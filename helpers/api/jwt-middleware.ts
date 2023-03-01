@@ -1,23 +1,24 @@
+import { expressjwt } from "express-jwt";
 import getConfig from "next/config";
 
-const expressJwt = require("express-jwt");
 const util = require("util");
 
 const { serverRuntimeConfig } = getConfig();
-
-export { jwtMiddleware };
+console.log("getConfig", getConfig());
 
 function jwtMiddleware(req: Request, res: Response) {
-  const middleware = expressJwt({
-    secret: serverRuntimeConfig.secret,
+  const middleware = expressjwt({
+    secret: serverRuntimeConfig.mySecret,
     algorithms: ["HS256"],
   }).unless({
     path: [
       // public routes that don't require authentication
-      "/api/users/register",
-      "/api/users/authenticate",
+      "/api/register",
+      "/api/authenticate",
     ],
   });
 
   return util.promisify(middleware)(req, res);
 }
+
+export { jwtMiddleware };

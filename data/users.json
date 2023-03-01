@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "firstName": "Phan",
+        "lastName": "Hoàng",
+        "username": "hoang120899",
+        "email": "hoang120899@gmail.com",
+        "hash": "$2a$10$mYXjWGdU/SmGxjIZdGmfX.PtOQ8AZJ0YpEhTPXklSHyALl7bqGbSW",
+        "id": 1,
+        "dateCreated": "2023-02-28T08:22:37.312Z",
+        "dateUpdated": "2023-02-28T08:22:37.312Z"
+    }
+]

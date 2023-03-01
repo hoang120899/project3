@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.app-layout {
+  .header {
+    background-color: #fff;
+    height: 60px;
+    box-shadow: 0 0.125rem 0.125rem -0.0625rem #00000026;
+    position: relative;
+    transition: 200ms background-color cubic-bezier(0.42, 0, 0.58, 1);
+  }
+  .btn-logout {
+    @apply flex justify-center items-center gap-2;
+    cursor: pointer;
+    &:hover {
+      color: #1677ff;
+    }
+  }
+}

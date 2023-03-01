@@ -1,5 +1,5 @@
 import { Link } from "@fluentui/react-components";
-import MainLayout from "component/layout/MainLayout";
+import { MainLayout } from "component/layout";
 import { ListUser } from "models";
 import { useEffect, useState } from "react";
 import { userService } from "services";

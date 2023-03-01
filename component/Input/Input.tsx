@@ -1,4 +1,10 @@
-import { Input, InputProps, Text } from "@fluentui/react-components";
+import {
+  Input,
+  InputOnChangeData,
+  InputProps,
+  Text,
+} from "@fluentui/react-components";
+import { useCallback, useEffect } from "react";
 
 interface InputFormProps {
   value?: string;
@@ -15,6 +21,15 @@ export const InputForm = ({
   label,
   inputProps,
 }: InputFormProps) => {
+  const handleChangevalue = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
+      onChange && onChange(data.value);
+    },
+    []
+  );
+  useEffect(() => {
+    console.log("error", error);
+  }, [error]);
   return (
     <div className="mb-2">
       {label ? (
@@ -24,10 +39,11 @@ export const InputForm = ({
       ) : null}
       <Input
         value={value}
-        onChange={(e, data) => onChange && onChange(data.value)}
+        onChange={handleChangevalue}
         className="w-full"
         {...inputProps}
       />
+      {error ? <div>{error}</div> : null}
     </div>
   );
 };

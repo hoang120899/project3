@@ -9,6 +9,7 @@ import { LoginPaypoad } from "models";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useRef } from "react";
+import { PATH_AUTH, PATH_DASHBOARD } from "routes";
 import { userService } from "services";
 import * as Yup from "yup";
 
@@ -17,6 +18,7 @@ export default Login;
 function Login() {
   const router = useRouter();
   const formRef = useRef<FormikProps<any>>(null);
+  console.log("router", router);
 
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -32,8 +34,8 @@ function Login() {
       .login(username, password)
       .then(() => {
         // get return url from query parameters or default to '/'
-        const returnUrl = router.query || "/";
-        router.push(returnUrl);
+        console.log("login success", router.query);
+        router.push(PATH_DASHBOARD.root);
       })
       .catch(() => console.log("hihi"));
   }
@@ -84,9 +86,7 @@ function Login() {
               <Button onClick={handleSubmitForm}>Login</Button>
             </div>
             <div>
-              <Link href="/account/register" onClick={() => console.log(1)}>
-                Register now ...
-              </Link>
+              <Link href={PATH_AUTH.register}>Register now ...</Link>
             </div>
           </div>
         </Card>

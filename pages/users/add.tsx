@@ -1,4 +1,4 @@
-import MainLayout from "component/layout/MainLayout";
+import { MainLayout } from "component/layout";
 
 export default Add;
 

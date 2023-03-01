@@ -10,3 +10,11 @@ export interface User {
 }
 
 export type ListUser = User[];
+
+export interface UserRegister {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+}

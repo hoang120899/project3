@@ -1,4 +1,4 @@
-import MainLayout from "component/layout/MainLayout";
+import { MainLayout } from "component/layout";
 import { useEffect, useState } from "react";
 import { userService } from "services";
 

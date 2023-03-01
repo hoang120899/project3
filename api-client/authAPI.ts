@@ -1,4 +1,4 @@
-import axiosClient from "api-client/axiosClient";
+import { axiosClient } from "api-client/axiosClient";
 import { LoginPaypoad } from "models";
 
 export const authAPI = {
