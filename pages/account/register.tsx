@@ -1,5 +1,7 @@
+import { Link } from "@fluentui/react";
 import { Button, Text } from "@fluentui/react-components";
 import { Card } from "@fluentui/react-components/unstable";
+import { authAPI } from "api-client";
 import Form from "component/Form";
 import FormItem from "component/Form/Item";
 import { InputForm } from "component/Input";
@@ -8,7 +10,6 @@ import { FormikProps } from "formik";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useRef } from "react";
 import { PATH_AUTH } from "routes";
-import { userService } from "services";
 import * as Yup from "yup";
 
 export default Register;
@@ -41,7 +42,7 @@ function Register() {
       .required("Email address is required!"),
     username: Yup.string()
       .matches(/[^\s]/, "Username can't be all space!")
-      .required("Email address is required!"),
+      .required("The Username is required!"),
     password: Yup.string()
       .matches(
         // eslint-disable-next-line no-useless-escape
@@ -66,7 +67,7 @@ function Register() {
       email: user.email,
       password: user.password,
     };
-    return userService
+    return authAPI
       .register(dataSubmit)
       .then(() => {
         router.push(PATH_AUTH.login);
@@ -77,7 +78,7 @@ function Register() {
   return (
     <div className="flex h-full items-center justify-around">
       <div className="w-[50%] h-full mx-auto">
-        <Card className="flex p-8" style={{ height: 600 }}>
+        <Card className="flex p-8" style={{ minHeight: 700 }}>
           <div>
             <Text
               as="h4"
@@ -149,8 +150,19 @@ function Register() {
                 />
               </FormItem>
             </Form>
-            <div className="flex justify-center mt-4">
+            <div className="flex flex-col justify-center mt-4">
+              <div className="mt-4 mb-4 flex justify-center">
+                ----------------------------
+              </div>
               <Button onClick={handleSubmitForm}>Register</Button>
+              <div className="mt-4">
+                <Link
+                  onClick={() => router.push(PATH_AUTH.login)}
+                  className="text-black"
+                >
+                  You have account? Login here ...
+                </Link>
+              </div>
             </div>
           </div>
         </Card>

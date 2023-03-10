@@ -9,35 +9,29 @@ import { InputArea } from "component/Input/InputArea";
 import { MainLayout } from "component/layout";
 import { FormikProps } from "formik";
 import { useToggle } from "hooks";
-import { User } from "models";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { PATH_DASHBOARD } from "routes";
 import * as Yup from "yup";
 
-interface EditProps {
-  id?: string;
-}
+export default AddUser;
 
-const EditUser = ({ id, ...props }: EditProps) => {
+function AddUser() {
   // value default
   const router = useRouter();
   const { toggle: updateValue } = useToggle();
   const formRef = useRef<FormikProps<any>>(null);
-  const [title, setTitle] = useState("");
   const initialValues = useMemo(
     () => ({
       firstName: "",
       lastName: "",
       username: "",
       email: "",
-      id: "",
-      note: "",
+      password: "",
+      confirmPassword: "",
     }),
     []
   );
-
-  const [dataUser, setDataUser] = useState<User>(initialValues);
   // form validation rules
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -52,6 +46,16 @@ const EditUser = ({ id, ...props }: EditProps) => {
     username: Yup.string()
       .matches(/[^\s]/, "Username can't be all space!")
       .required("The Username is required!"),
+    password: Yup.string()
+      .matches(
+        // eslint-disable-next-line no-useless-escape
+        /^(?=.*[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*[@$!%*#=\/^?&])[a-zA-Z@$!%*#=\/^?&\d]{8,}$/g,
+        "The password must be 8 characters long and must be a combination of uppercase letters, lowercase letters, numbers, and symbols"
+      )
+      .required("The current password is required"),
+    confirmPassword: Yup.string()
+      .required("Confirm password is required!")
+      .oneOf([Yup.ref("password")], "The confirmation password is not match"),
   });
   const handleSubmitForm = useCallback(() => {
     console.log("submit");
@@ -59,20 +63,21 @@ const EditUser = ({ id, ...props }: EditProps) => {
   }, []);
   // get functions to build form with useForm() hook
   function onSubmit(user: any) {
+    const dataSubmit = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      password: user.password,
+      note: user.note,
+    };
     return authAPI
-      .updateUser(user.id, user)
+      .register(dataSubmit)
       .then(() => {
         router.push(PATH_DASHBOARD.users.root);
       })
-      .catch(() => console.log("update failed"));
+      .catch(() => console.log("login failed"));
   }
-
-  useEffect(() => {
-    authAPI.getByIdUser(id || "").then((data) => {
-      setDataUser(data);
-      setTitle(data.username);
-    });
-  }, [id]);
   return (
     <div>
       <div className="mb-6 flex justify-between content-center">
@@ -86,23 +91,22 @@ const EditUser = ({ id, ...props }: EditProps) => {
               router.push(PATH_DASHBOARD.users.root);
             }}
           ></Button>
-          <Title3>{title}</Title3>
+          <Title3>Add new user</Title3>
         </div>
         <Button onClick={handleSubmitForm} disabled={!formRef.current?.dirty}>
-          Save
+          Add user
         </Button>
       </div>
       <div>
         <Card className="flex p-8" style={{ minHeight: 650 }}>
           <Form
-            initialValues={dataUser || initialValues}
+            initialValues={initialValues}
             ref={formRef}
             onSubmit={(values) => onSubmit(values)}
             onValuesChange={() => updateValue()}
             validationSchema={validationSchema}
             enableReinitialize
           >
-            <FormItem name="id" />
             <FormItem name="firstName">
               <InputForm
                 label="First name"
@@ -135,6 +139,27 @@ const EditUser = ({ id, ...props }: EditProps) => {
                 }}
               />
             </FormItem>
+            <FormItem name="password">
+              <InputForm
+                label="Password"
+                inputProps={{
+                  type: "password",
+                  placeholder: "Password",
+                  size: "medium",
+                  autoComplete: "off",
+                }}
+              />
+            </FormItem>
+            <FormItem name="confirmPassword">
+              <InputForm
+                label="Confirm password"
+                inputProps={{
+                  type: "password",
+                  placeholder: "Confirm password",
+                  size: "medium",
+                }}
+              />
+            </FormItem>
             <FormItem name="note">
               <InputArea
                 label="Note"
@@ -150,16 +175,5 @@ const EditUser = ({ id, ...props }: EditProps) => {
       </div>
     </div>
   );
-};
-
-export default EditUser;
-EditUser.Layout = MainLayout;
-
-export async function getServerSideProps({ params }: any) {
-  // const res = await authAPI.getByIdUser(params.id);
-  // console.log("params", res);
-
-  return {
-    props: { id: params.id },
-  };
 }
+AddUser.Layout = MainLayout;

@@ -4,7 +4,6 @@ import getConfig from "next/config";
 const util = require("util");
 
 const { serverRuntimeConfig } = getConfig();
-console.log("getConfig", getConfig());
 
 function jwtMiddleware(req: Request, res: Response) {
   const middleware = expressjwt({

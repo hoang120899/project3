@@ -1,34 +1,64 @@
-import axios from "axios";
+import { authAPI } from "api-client/authAPI";
+import axios, { AxiosResponse } from "axios";
 
-export const axiosClient = axios.create({
-  baseURL: "",
+const axiosClient = axios.create({
+  baseURL: "/",
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-// Add a request interceptor
-axiosClient.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
-    return config;
-  },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-  }
-);
-
 // Add a response interceptor
 axiosClient.interceptors.response.use(
-  function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response;
-  },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  (response) => response,
+  (error) => Promise.reject(error)
+);
+
+function authHeader() {
+  // return auth header with jwt if user is logged in and request is to the api url
+  const user = authAPI.userValue;
+  const isLoggedIn = user && user.token;
+  if (isLoggedIn) {
+    return { Authorization: `Bearer ${user.token}` };
+  } else {
+    return { Authorization: "" };
+  }
+}
+
+function handleResponse(response: AxiosResponse<any>) {
+  const data = response.data;
+  if (response.statusText !== "OK") {
+    if ([401, 403].includes(response.status) && authAPI.userValue) {
+      authAPI.logout();
+    }
+
+    const error = (data && data.message) || response.statusText;
     return Promise.reject(error);
   }
-);
+
+  return data;
+}
+
+// api
+
+const _getApi = (url: string, data?: any) =>
+  axiosClient
+    .get(url, { data: data, headers: { ...authHeader() } })
+    .then(handleResponse);
+
+const _postApi = (url: string, data: any) =>
+  axiosClient
+    .post(url, JSON.stringify(data), { headers: { ...authHeader() } })
+    .then(handleResponse);
+
+const _putApi = (url: string, data: any) =>
+  axiosClient
+    .put(url, JSON.stringify(data), { headers: { ...authHeader() } })
+    .then(handleResponse);
+
+const _deleteApi = (url: string) =>
+  axiosClient
+    .delete(url, { headers: { ...authHeader() } })
+    .then(handleResponse);
+//////
+
+export { _getApi, _postApi, _putApi, _deleteApi };

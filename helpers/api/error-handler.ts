@@ -10,6 +10,7 @@ function errorHandler(err: any, res: any) {
 
   if (err.name === "UnauthorizedError") {
     // jwt authentication error
+    console.error("UnauthorizedError");
     return res.status(401).json({ message: "Invalid Token" });
   }
 

@@ -1,10 +1,11 @@
+import { Icon } from "@fluentui/react";
 import {
   Input,
   InputOnChangeData,
   InputProps,
   Text,
 } from "@fluentui/react-components";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 interface InputFormProps {
   value?: string;
@@ -27,11 +28,8 @@ export const InputForm = ({
     },
     []
   );
-  useEffect(() => {
-    console.log("error", error);
-  }, [error]);
   return (
-    <div className="mb-2">
+    <div className="mb-4">
       {label ? (
         <div className="mb-2">
           <Text>{label}</Text>
@@ -43,7 +41,12 @@ export const InputForm = ({
         className="w-full"
         {...inputProps}
       />
-      {error ? <div>{error}</div> : null}
+      {error ? (
+        <div className="flex items-center mt-1">
+          <Icon iconName="Error" className="mr-2 text-red-600" />
+          <Text className="text-red-600">{error}</Text>
+        </div>
+      ) : null}
     </div>
   );
 };

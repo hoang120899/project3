@@ -1,4 +1,3 @@
-import { Icon } from "@fluentui/react";
 import { Button, Title3 } from "@fluentui/react-components";
 import { Card } from "@fluentui/react-components/unstable";
 import { authAPI } from "api-client";
@@ -6,25 +5,23 @@ import Form from "component/Form";
 import FormItem from "component/Form/Item";
 import { InputForm } from "component/Input";
 import { InputArea } from "component/Input/InputArea";
+import { ModalChangePassword } from "component/ModalChangePassword";
 import { MainLayout } from "component/layout";
+import { useAuth } from "context";
 import { FormikProps } from "formik";
 import { useToggle } from "hooks";
 import { User } from "models";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { PATH_DASHBOARD } from "routes";
 import * as Yup from "yup";
 
-interface EditProps {
-  id?: string;
-}
+interface ProfileProps {}
 
-const EditUser = ({ id, ...props }: EditProps) => {
-  // value default
+const Profile = (props: ProfileProps) => {
+  const { user, handleUpdateUser: updateUserProfile } = useAuth();
   const router = useRouter();
   const { toggle: updateValue } = useToggle();
   const formRef = useRef<FormikProps<any>>(null);
-  const [title, setTitle] = useState("");
   const initialValues = useMemo(
     () => ({
       firstName: "",
@@ -54,39 +51,45 @@ const EditUser = ({ id, ...props }: EditProps) => {
       .required("The Username is required!"),
   });
   const handleSubmitForm = useCallback(() => {
-    console.log("submit");
     formRef.current?.submitForm();
   }, []);
+  // handle fetch Value
+  const handleFetchValue = useCallback(
+    (isUpdate?: boolean) => {
+      authAPI
+        .getByIdUser(user.id)
+        .then((data: any) => {
+          setDataUser(data);
+          if (isUpdate) {
+            updateUserProfile(data);
+          }
+        })
+        .catch(() => console.log("error"));
+    },
+    [user]
+  );
   // get functions to build form with useForm() hook
   function onSubmit(user: any) {
     return authAPI
       .updateUser(user.id, user)
       .then(() => {
-        router.push(PATH_DASHBOARD.users.root);
+        handleFetchValue();
       })
       .catch(() => console.log("update failed"));
   }
 
   useEffect(() => {
-    authAPI.getByIdUser(id || "").then((data) => {
-      setDataUser(data);
-      setTitle(data.username);
-    });
-  }, [id]);
+    handleFetchValue();
+  }, []);
+
+  useEffect(() => {
+    console.log("dataUser", dataUser);
+  }, [dataUser]);
   return (
     <div>
       <div className="mb-6 flex justify-between content-center">
         <div className="flex items-center">
-          <Button
-            icon={<Icon iconName="Back" />}
-            size="large"
-            className="mr-4"
-            appearance="subtle"
-            onClick={() => {
-              router.push(PATH_DASHBOARD.users.root);
-            }}
-          ></Button>
-          <Title3>{title}</Title3>
+          <Title3>Profile</Title3>
         </div>
         <Button onClick={handleSubmitForm} disabled={!formRef.current?.dirty}>
           Save
@@ -146,20 +149,15 @@ const EditUser = ({ id, ...props }: EditProps) => {
               />
             </FormItem>
           </Form>
+          <div>
+            <ModalChangePassword />
+          </div>
         </Card>
       </div>
     </div>
   );
 };
 
-export default EditUser;
-EditUser.Layout = MainLayout;
+export default Profile;
 
-export async function getServerSideProps({ params }: any) {
-  // const res = await authAPI.getByIdUser(params.id);
-  // console.log("params", res);
-
-  return {
-    props: { id: params.id },
-  };
-}
+Profile.Layout = MainLayout;

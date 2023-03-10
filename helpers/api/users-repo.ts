@@ -1,14 +1,17 @@
 import { User } from "models";
+import { v4 as uuidv4 } from "uuid";
 
 const fs = require("fs");
-
 // users in JSON file for simplicity, store in a db for production applications
 let users = require("data/users.json");
 
 export const usersRepo = {
-  getAll: () => users,
-  getById: (id: string) =>
-    users.find((x: User) => x.id.toString() === id.toString()),
+  getAll: () => {
+    return users;
+  },
+  getById: (id: string) => {
+    return users.find((x: User) => x.id.toString() === id.toString());
+  },
   find: (x: any) => users.find(x),
   create,
   update,
@@ -17,19 +20,19 @@ export const usersRepo = {
 
 function create(user: User) {
   // generate new user id
-  user.id = users.length ? Math.max(...users.map((x: any) => x.id)) + 1 : 1;
-
+  user.id = uuidv4();
   // set date created and updated
   user.dateCreated = new Date().toISOString();
   user.dateUpdated = new Date().toISOString();
-
+  // genarate another data
+  user.note = user.note || "";
   // add and save user
   users.push(user);
   saveData();
 }
 
 function update(id: string, params: any) {
-  const user = users.find((x: any) => x.id.toString() === id.toString());
+  const user = users.find((user: User) => user.id === id);
 
   // set date updated
   user.dateUpdated = new Date().toISOString();

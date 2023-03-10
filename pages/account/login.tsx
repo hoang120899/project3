@@ -4,13 +4,13 @@ import Form from "component/Form";
 import FormItem from "component/Form/Item";
 import { InputForm } from "component/Input";
 import OnBoardingLayout from "component/layout/OnBoardingLayout";
+import { useAuth } from "context";
 import { FormikProps } from "formik";
 import { LoginPaypoad } from "models";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useRef } from "react";
-import { PATH_AUTH, PATH_DASHBOARD } from "routes";
-import { userService } from "services";
+import { useCallback, useMemo, useRef } from "react";
+import { PATH_AUTH } from "routes";
 import * as Yup from "yup";
 
 export default Login;
@@ -18,27 +18,37 @@ export default Login;
 function Login() {
   const router = useRouter();
   const formRef = useRef<FormikProps<any>>(null);
-  console.log("router", router);
-
+  const { login } = useAuth();
+  const initialValues = useMemo(
+    () => ({
+      username: "",
+      password: "",
+    }),
+    []
+  );
   // form validation rules
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
-    password: Yup.string().required("Password is required"),
+    username: Yup.string()
+      .matches(/[^\s]/, "Username can't be all space!")
+      .required("The Username is required!"),
+    password: Yup.string()
+      .matches(
+        // eslint-disable-next-line no-useless-escape
+        /^(?=.*[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*[@$!%*#=\/^?&])[a-zA-Z@$!%*#=\/^?&\d]{8,}$/g,
+        "The password must be 8 characters long and must be a combination of uppercase letters, lowercase letters, numbers, and symbols"
+      )
+      .required("The current password is required"),
   });
   const handleSubmitForm = useCallback(() => {
     formRef.current?.submitForm();
   }, []);
-  // get functions to build form with useForm() hook
-  function onSubmit({ username, password }: LoginPaypoad) {
-    return userService
-      .login(username, password)
-      .then(() => {
-        // get return url from query parameters or default to '/'
-        console.log("login success", router.query);
-        router.push(PATH_DASHBOARD.root);
-      })
-      .catch(() => console.log("hihi"));
-  }
+  // hadnle Submit form
+  const onSubmit = useCallback(
+    (data: LoginPaypoad) => {
+      login(data);
+    },
+    [router]
+  );
 
   return (
     <div className="flex h-full items-center justify-around">
@@ -55,7 +65,7 @@ function Login() {
               Login now
             </Text>
             <Form
-              initialValues={{}}
+              initialValues={initialValues}
               innerRef={formRef}
               onSubmit={(values) =>
                 onSubmit({
@@ -63,6 +73,7 @@ function Login() {
                   password: values.password,
                 })
               }
+              validationSchema={validationSchema}
               enableReinitialize
             >
               <FormItem name="username">

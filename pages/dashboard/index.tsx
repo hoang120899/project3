@@ -1,3 +1,5 @@
+import { MainLayout } from "component/layout";
+
 interface DashboardProps {}
 
 const Dashboard = (props: DashboardProps) => {
@@ -5,3 +7,4 @@ const Dashboard = (props: DashboardProps) => {
 };
 
 export default Dashboard;
+Dashboard.Layout = MainLayout;
