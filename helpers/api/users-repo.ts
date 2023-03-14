@@ -1,4 +1,4 @@
-import { User } from "models";
+import { User } from "src/models";
 import { v4 as uuidv4 } from "uuid";
 
 const fs = require("fs");

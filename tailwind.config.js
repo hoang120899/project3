@@ -1,6 +1,9 @@
 module.exports = {
   important: true,
-  content: ["./pages/**/*.{js,ts,jsx,tsx}", "./component/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "src/pages/**/*.{js,ts,jsx,tsx}",
+    "src/component/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     screens: {
       xs: "480",
