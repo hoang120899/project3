@@ -6,7 +6,7 @@ Lớp: KTMT.06-K62
 
 Giảng viên hướng dẫn: ThS. Nguyễn Đức Tiến
 
-# App structure:
+# Cấu trúc ứng dụng:
 
 - src: Thư mục gốc
 
@@ -31,7 +31,7 @@ Giảng viên hướng dẫn: ThS. Nguyễn Đức Tiến
 - data: Folder chứa dữ liệu người dùng được lưu vào các file .json
 - helpers/api: Backend logic xử lí các request, response từ client
 
-## Use in the app:
+## Sử dụng trong project:
 
 - Quản lí package: [Yarn](https://classic.yarnpkg.com/)
 - Technologies:
@@ -43,7 +43,7 @@ Giảng viên hướng dẫn: ThS. Nguyễn Đức Tiến
   - Form controler: Formik, Yup, ...
   - [React](https://react.dev/)
 
-### Clone project with HTTPS & run project
+### Clone project sử dụng HTTPS và khởi động project
 
 Clone project:
 
@@ -76,9 +76,11 @@ yarn build
 
 Start app:
 
+```
 yarn start
 
 ```
+
 Using development
 
 ```
@@ -141,13 +143,14 @@ Các setting cần thiết cho VsCode đã được thêm vào project, không t
 
 ### 4. Khai báo module page
 
+- Các module mới phải được khai báo trong **src/pages**
 - Đặt tên **module** theo định dạng **camelCase**
 - Khuyên dùng **FunctionComponent**
 - Cấu trúc mỗi module sẽ có dạng:
-  - moduleName
-    -- index.tsx (/moduleName)
-    -- [param].tsx (/moduleName/param={...})
-    -- [...slug].tsx (/moduleName/"something else")
+  - moduleName\
+    -- index.tsx (/moduleName)\
+    -- [param].tsx (/moduleName/param={...})\
+    -- [...slug].tsx (/moduleName/"something else")\
     -- childModule (/moduleName/childModule )
 
 ### 5. JSX
