@@ -41,6 +41,11 @@ export function TableActions({ record, deleteAction }: TableActionsProps) {
           </PopoverTrigger>
 
           <PopoverSurface>
+            <PopoverTrigger disableButtonEnhancement>
+              <Button icon={<Icon iconName="Delete" />} className="ml-4">
+                Delete
+              </Button>
+            </PopoverTrigger>
             <div className="mb-4">
               <Text weight="bold">Are you sure delete?</Text>
             </div>
