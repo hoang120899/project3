@@ -2,7 +2,7 @@
 
 Sinh viên: Phan Minh Hoàng\
 MSSV: 20173136\
-Lớp: KTMT.06-K62\
+Lớp: KTMT.06-K62
 
 Giảng viên hướng dẫn: ThS. Nguyễn Đức Tiến
 
