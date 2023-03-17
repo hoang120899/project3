@@ -1,8 +1,8 @@
 # Project 3. Base authentication NextJS using TypeScript, FluentUI v9
 
-Sinh viên: Phan Minh Hoàng.
-MSSV: 20173136
-Lớp: KTMT.06-K62
+Sinh viên: Phan Minh Hoàng\
+MSSV: 20173136\
+Lớp: KTMT.06-K62\
 
 Giảng viên hướng dẫn: ThS. Nguyễn Đức Tiến
 
@@ -78,12 +78,11 @@ Start app:
 
 yarn start
 
-### Develop
-
+```
 Using development
 
 ```
-cd my-turborepo
+cd project3
 
 yarn dev
 ```
@@ -121,7 +120,7 @@ Các setting cần thiết cho VsCode đã được thêm vào project, không t
 
 ## II. Convention code:
 
-### 1. Indent
+### 1. Căn lề
 
 - Kiểu: space
 - Size: 2
